@@ -2,49 +2,11 @@ package dg
 
 import (
 	"bytes"
+	"context"
 	"encoding/xml"
 	"fmt"
+	"os"
 )
-
-type FinishedFeature struct {
-	XMLName xml.Name `xml:"FinishedFeature"`
-
-	FeatureId string `xml:"featureId"`
-
-	AcquisitionDate string `xml:"acquisitionDate"`
-	// "8.4 meters"
-	CE90Accuracy   string  `xml:"CE90Accuracy"`
-	RMSEAccuracy   string  `xml:"RMSEAccuracy"`
-	CloudCover     float64 `xml:"cloudCover"`
-	ColorBandOrder string  `xml:"colorBandOrder"`
-}
-
-type TileMatrixFeature struct {
-	XMLName xml.Name `xml:"TileMatrixFeature"`
-
-	TileMatrix string `xml:"tileMatrix"`
-	Row        int    `xml:"row"`
-	Column     int    `xml:"column"`
-
-	TileIdentifier          string `xml:"tileIdentifier"`
-	FeatureInTileIdentifier string `xml:"featureInTileIdentifier"`
-
-	TileWidth  int `xml:"tileWidth"`
-	TileHeight int `xml:"tileHeight"`
-
-	Features []FinishedFeature `xml:"features>FinishedFeature"`
-}
-
-// type FeatureMembers struct {
-
-// 	[]TileMatrixFeature
-// }
-
-type FeatureCollection struct {
-	XMLName xml.Name `xml:"FeatureCollection"`
-
-	FeatureMembers []TileMatrixFeature `xml:"featureMembers>TileMatrixFeature"`
-}
 
 func ExampleFoo() {
 	var fc FeatureCollection
@@ -71,6 +33,26 @@ func ExampleFoo() {
 
 	// Output:
 	// TODO
+}
+
+func ExampleGetFeature() {
+	client := NewClient(
+		nil,
+		os.Getenv("CONNECTID"),
+		os.Getenv("USERNAME"),
+		os.Getenv("PASSWORD"),
+	)
+
+	tmf, err := client.WebFeatureService.GetFeature(context.Background(), 17, 50647, 20967)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v\n", tmf)
+
+	// Output:
+	// TODO
+
 }
 
 const str = `<?xml version="1.0" encoding="UTF-8" ?>
